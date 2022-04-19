@@ -14,19 +14,12 @@ public class DSU {
     private int len2;
 
     int findSet(int elem, int len){
-        len = 0;
-        int ind = arr[elem];
-        if(ind < 0) {
+        if(arr[elem] < 0) {
             return elem;
         }
-        while(ind > 0){
-            if(arr[ind] < 0){
-                break;
-            }
-            ind = arr[ind];
-            len++;
-        }
-        return ind;
+        len++;
+        arr[elem] = findSet(arr[elem], len);
+        return arr[elem];
     }
 
     void union(int e1, int e2){
@@ -43,6 +36,8 @@ public class DSU {
             arr[parent] += temp;
             ans--;
         }
+        len1 = 0;
+        len2 = 0;
     }
 
 
@@ -56,11 +51,18 @@ public class DSU {
         ans = n;
         Arrays.fill(arr, -1);
         int e1, e2;
-        for(int i = 0; i < k; i++){
+        st = new StringTokenizer(br.readLine(), " ");
+        e1 = Integer.parseInt(st.nextToken());
+        e2 = Integer.parseInt(st.nextToken());
+        arr[e2] = e1;
+        arr[e1]--;
+        ans--;
+        fw.write(ans + "\n");
+        for(int i = 1; i < k; i++){
             if(ans == 1){
                 fw.write(ans + "");
                 if(i != k - 1){
-                    fw.write(System.lineSeparator());
+                    fw.write("\n");
                 }
             }
             else {
@@ -70,7 +72,7 @@ public class DSU {
                 union(e1, e2);
                 fw.write(ans + "");
                 if (i != k - 1) {
-                    fw.write(System.lineSeparator());
+                    fw.write("\n");
                 }
             }
         }
