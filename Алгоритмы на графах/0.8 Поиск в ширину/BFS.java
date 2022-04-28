@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -54,16 +55,20 @@ public class BFS {
 
 
     }
-    public void solve(){
+    public void solve() throws IOException{
+        FileWriter fw = new FileWriter("output.txt");
+
         this.BreadthFirstSearch(0);
         for(int i = 0; i < n; i++){
             if(is_visited[i] == 0){
                 this.BreadthFirstSearch(i);
             }
         }
+
         for(int elem : marks){
-            System.out.print(elem + " ");
+            fw.write(elem + " ");
         }
+        fw.close();
     }
     public static void main(String[] args) throws IOException{
         BFS obj = new BFS("input.txt");
