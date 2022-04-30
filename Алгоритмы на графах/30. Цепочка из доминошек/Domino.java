@@ -81,8 +81,97 @@ public class Domino{
             }
         }
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
+public class Domino{
+    private int n;
+    private int m;
+    private List[] list;
+    private boolean ans;
+    private Queue<Integer> queue;
+    private int[] is_visited;
+    private int[] degrees;
+
+    public Domino(int m) {
+        this.n = 7;
+        this.m = m;
+        this.list = new List [n];
         for(int i = 0; i < n; i++){
-            if(list[i].size() % 2 != 0 && list[i].size() != 0){
+            list[i] = new ArrayList<Integer>();
+        }
+        this.queue = new LinkedList<>();
+        this.is_visited = new int[7];
+        this.degrees = new int[7];
+    }
+
+    public void BreadthFirstSearch(int start){
+        queue.add(start);
+        is_visited[start] = 1;
+        int p;
+
+        while(!queue.isEmpty()){
+            p = queue.poll();
+
+            for(int j = 0; j < list[p].size(); j++){
+                int elem = (int) list[p].get(j);
+                if(is_visited[elem] == 0){
+                    is_visited[elem] = 1;
+                    queue.add(elem);
+                }
+            }
+        }
+
+
+    }
+
+    public void fill_lists(BufferedReader br) throws IOException {
+        StringTokenizer st;
+        int l, k;
+
+        for(int i = 0; i < m; i++){
+            st = new StringTokenizer(br.readLine(), " ");
+            l = Integer.parseInt(st.nextToken());
+            k = Integer.parseInt(st.nextToken());
+
+            list[l].add(k);
+            list[k].add(l);
+            if(k != l){
+                degrees[k]++;
+                degrees[l]++;
+            }
+
+        }
+    }
+    public void solve(){
+        if(m == 2){
+            ans = false;
+            return;
+        }
+
+        ans = true;
+        int start = 0;
+
+        for(int i = 0; i < n; i++){
+            if(list[i].size() != 0){
+                start = i;
+                break;
+            }
+        }
+
+        this.BreadthFirstSearch(start);
+        for(int i = start + 1; i < n; i++){
+            if(is_visited[i] == 0 && list[i].size() != 0){
+                ans = false;
+                return;
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            if(degrees[i] % 2 != 0){
                 ans = false;
                 break;
             }
