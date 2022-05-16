@@ -7,11 +7,10 @@ class Segment_Tree {
     private int[] p;
     private int n;
     private int m;
-    private int[] tree;
-    //private long[] tree2;
-    private int[] before;
-    private int[] after;
-    private int ans;
+    private long[] tree;
+    private long[] before;
+    private long[] after;
+    private long ans;
 
     Segment_Tree(String filename) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -19,8 +18,8 @@ class Segment_Tree {
         this.n = Integer.parseInt(br.readLine());
 
         this.p = new int[n];
-        this.after = new int[n];
-        this.before = new int[n];
+        this.after = new long[n];
+        this.before = new long[n];
 
         this.m = 0;
         for (int i = 0; i < n; i++) {
@@ -31,11 +30,11 @@ class Segment_Tree {
         }
         m++;
 
-        this.tree = new int[4 * m];
+        this.tree = new long[4 * m];
         //this.tree2 = new long[4 * m];
     }
 
-    public void add_to_tree(int[] tree, int ind, int v, int left, int right) {
+    public void add_to_tree(long[] tree, int ind, int v, int left, int right) {
         if (right - left == 1) {
             tree[v] += 1;
             return;
@@ -51,7 +50,7 @@ class Segment_Tree {
         tree[v] = tree[2 * v] + tree[2 * v + 1];
     }
 
-    public int find_sum(int[] t, int v, int curr_left, int curr_right, int left, int right) {
+    public long find_sum(long[] t, int v, int curr_left, int curr_right, int left, int right) {
         if (left == curr_left && curr_right == right) {
             return t[v];
         }
@@ -75,18 +74,10 @@ class Segment_Tree {
 
     public void solve2() throws IOException {
         FileWriter fw = new FileWriter("output.txt");
-        /*if (n < 3) {
-            fw.write("0");
-            fw.close();
-            return;
-        }
-
-         */
 
         for (int i = 0; i < n; i++) {
             add_to_tree(tree, p[i], 1, 0, m);
             before[i] = i - find_sum(tree, 1, 0, m, 0, p[i]);
-
 
             /*add_to_tree(tree2, p[n - i - 1], 1, 0, m);
             after[n - i - 1] = find_sum(tree2, 1, 0, m, 0, p[n - i - 1]);
