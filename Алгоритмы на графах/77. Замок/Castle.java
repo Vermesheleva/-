@@ -14,14 +14,15 @@ public class Castle {
     private int max_square;
     private int numOfComponents;
     private int new_max_square;
-    private int prev_component_square;
     private int next_component_square;
+    private int[] components_square;
 
     Castle(int a, int b){
         this.n = a;
         this.m = b;
         this.nv = a * b;
         this.is_visited = new int[nv];
+        this.components_square = new int[nv + 1];
         this.list = new List[n * m];
         this.queue = new LinkedList<>();
         for(int i = 0; i < nv; i++){
@@ -30,9 +31,7 @@ public class Castle {
         max_square = 0;
         numOfComponents = 1;
         new_max_square = 0;
-        prev_component_square = 0;
         next_component_square = 0;
-
     }
 
     void fillLists(StreamTokenizer st) throws IOException{
@@ -95,7 +94,7 @@ public class Castle {
     public int BreadthFirstSearch(int start){
         int num = 0;
         queue.add(start);
-        is_visited[start] = 1;
+        is_visited[start] = numOfComponents;
         int p;
 
         while(!queue.isEmpty()){
@@ -104,7 +103,7 @@ public class Castle {
 
                 for (int j = 0; j < list[p].size(); j++) {
                     if (is_visited[(int) list[p].get(j) - 1] == 0) {
-                        is_visited[(int) list[p].get(j) - 1] = 1;
+                        is_visited[(int) list[p].get(j) - 1] = numOfComponents;
                         queue.add((int) list[p].get(j) - 1);
                     }
                 }
@@ -118,22 +117,48 @@ public class Castle {
         FileWriter fw = new FileWriter("out.txt");
 
         max_square = BreadthFirstSearch(0);
+        components_square[1] = max_square;
         next_component_square = max_square;
-        new_max_square = max_square;
 
         for(int i = 0; i < nv; i++){
             if(is_visited[i] == 0){
                 numOfComponents++;
-                prev_component_square = next_component_square;
                 next_component_square = this.BreadthFirstSearch(i);
+                components_square[numOfComponents] = next_component_square;
+
                 if(next_component_square > max_square){
                     max_square = next_component_square;
                 }
-                if(next_component_square + prev_component_square > new_max_square){
-                    new_max_square = next_component_square + prev_component_square;
-                }
             }
         }
+        new_max_square = max_square;
+        for(int i = n; i < nv; i++) {
+            if (is_visited[i] != 0 && is_visited[i - n] != 0 && is_visited[i] != is_visited[i - n]) {
+                if (components_square[is_visited[i]] + components_square[is_visited[i - n]] > new_max_square) {
+                    new_max_square = components_square[is_visited[i]] + components_square[is_visited[i - n]];
+                }
+            }
+
+        }
+        for(int i = 0; i < nv - n; i++) {
+            if (is_visited[i] != 0 && is_visited[i + n] != 0 && is_visited[i] != is_visited[i + n]) {
+                if (components_square[is_visited[i]] + components_square[is_visited[i + n]] > new_max_square) {
+                    new_max_square = components_square[is_visited[i]] + components_square[is_visited[i + n]];
+                }
+            }
+
+        }
+        for(int i = 0; i < m; i++){
+            for(int j = 1; j < n; j++) {
+                if (is_visited[j] != 0 && is_visited[j - 1] != 0 && is_visited[j] != is_visited[j - 1]) {
+                    if (components_square[is_visited[j]] + components_square[is_visited[j - 1]] > new_max_square) {
+                        new_max_square = components_square[is_visited[j]] + components_square[is_visited[j - 1]];
+                    }
+                }
+        }
+        }
+
+
         fw.write(numOfComponents + "\n");
         fw.write(max_square + "\n");
         fw.write(new_max_square + "");
